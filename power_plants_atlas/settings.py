@@ -42,6 +42,9 @@ INSTALLED_APPS = [
 
     # Third party apps
     "djgeojson",
+
+    # My apps
+    "app_plants_info",
 ]
 
 MIDDLEWARE = [
