@@ -1,2 +1,72 @@
 {% extends "app/layout.html"%} {% block content %} {% load static %}
+<!-- Import Leaflet CSS -->
+<link rel="stylesheet" href="{% static 'app/leaflet/leaflet.css' %}" />
+<style>
+  #map {
+    height: calc(100vh - 80px) !important;
+    font-size: 12px;
+  }
+</style>
+<div id="map"></div>
+
+<!-- Import Leaflet JS -->
+<script src="{% static 'app/jquery/dist/jquery.min.js' %}"></script>
+<script src="{% static 'app/leaflet/leaflet.js' %}"></script>
+
+<script type="text/javascript">
+  // Basemap urls
+  const osm_map = L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }
+  );
+  const osm_humanitarian = L.tileLayer(
+    "http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }
+  );
+  const esri_dark_gray_base = L.tileLayer(
+    "http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution:
+        '&copy; <a href="http://services.arcgisonline.com/arcgis/rest/services">ESRI</a> arcgisonline',
+    }
+  );
+
+  const world_street_map = L.tileLayer(
+    "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution:
+        "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012",
+    }
+  );
+  const world_imagery = L.tileLayer(
+    "http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    {
+      attribution:
+        "Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community",
+    }
+  );
+
+  // Initialize the map
+  const map = L.map("map", {
+    layers: [osm_map], // Default basemap
+  }).setView([20.7, 10.5], 3);
+
+  // initialize the basemaps
+  const baseLayers = {
+    "Open Street Map": osm_map,
+    "OSM Humanitarian": osm_humanitarian,
+    "Dark Gray Base": esri_dark_gray_base,
+    "World Street Map": world_street_map,
+    "World Imagery": world_imagery,
+  };
+
+  // Add the layers control
+  const layersControl = L.control.layers(baseLayers).addTo(map);
+</script>
 {%endblock%}
