@@ -14,6 +14,14 @@
 <script src="{% static 'app/leaflet/leaflet.js' %}"></script>
 
 <script type="text/javascript">
+  // Url Endpoints
+  const solarUrl = '{% url "solarplants" %}';
+  const hydroUrl = '{% url "hydroplants" %}';
+  const windUrl = '{% url "windplants" %}';
+  const gasUrl = '{% url "gasplants" %}';
+  const coalUrl = '{% url "coalplants" %}';
+  const oilUrl = '{% url "oilplants" %}';
+
   // Basemap urls
   const osm_map = L.tileLayer(
     "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -66,7 +74,178 @@
     "World Imagery": world_imagery,
   };
 
+  // Defining an icon class
+  const MarkerIcon = L.Icon.extend({
+    options: {
+      shadowUrl: "{% static 'app/leaflet/images/marker-shadow.png' %}",
+      iconSize: [33, 34],
+      shadowSize: [40, 30],
+      iconAnchor: [12, 41],
+      shadowAnchor: [8, 38],
+      popupAnchor: [1, -34],
+    },
+  });
+
+  const pinkIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-pink.png' %}",
+  });
+  const blueIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-blue.png' %}",
+  });
+  const greenIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-green.png' %}",
+  });
+  const orangeIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-orange.png' %}",
+  });
+  const darkIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-dark.png' %}",
+  });
+  const redIcon = new MarkerIcon({
+    iconUrl: "{% static 'app/leaflet/images/icon-red.png' %}",
+  });
+
+  // Check JSON data
+  /* $.getJSON(dataUrl)
+      .done(function (data) {
+        console.log("Success:", data);
+      })
+      .fail(function (jqxhr, textStatus, error) {
+        const err = textStatus + ", " + error;
+        console.log("Request Failed: " + err);
+      }); */
+
+  // Create layer group
+  const solar_marker_layers = L.layerGroup().addTo(map);
+  const hydro_marker_layers = L.layerGroup().addTo(map);
+  const wind_marker_layers = L.layerGroup().addTo(map);
+  const gas_marker_layers = L.layerGroup().addTo(map);
+  const coal_marker_layers = L.layerGroup().addTo(map);
+  const oil_marker_layers = L.layerGroup().addTo(map);
+
+  // Get points for solar power plants
+  $.getJSON(solarUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: pinkIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      solar_marker_layers.addLayer(marker);
+    });
+  });
+
+  // Get points for hydro power plants
+  $.getJSON(hydroUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: blueIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      hydro_marker_layers.addLayer(marker);
+    });
+  });
+
+  // Get points for wind power plants
+  $.getJSON(windUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: greenIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      wind_marker_layers.addLayer(marker);
+    });
+  });
+
+  // Get points for gas power plants
+  $.getJSON(gasUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: orangeIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      gas_marker_layers.addLayer(marker);
+    });
+  });
+
+  // Get points for coal power plants
+  $.getJSON(coalUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: darkIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      coal_marker_layers.addLayer(marker);
+    });
+  });
+
+  // Get points for oil power plants
+  $.getJSON(oilUrl, function (data) {
+    // Iterate over each data object
+    $.each(data, function (i, item) {
+      const marker = L.marker(L.latLng(item.latitude, item.longitude), {
+        icon: redIcon,
+      });
+      marker.bindPopup("<h4>Name: " + item.name + "</h4>");
+      marker.on("mouseover", function (e) {
+        this.openPopup();
+      });
+      marker.on("mouseout", function (e) {
+        this.closePopup();
+      });
+      oil_marker_layers.addLayer(marker);
+    });
+  });
+
+  const overlayMaps = {
+    "Oil-fired power plants": oil_marker_layers,
+    "Coal-fired power plants": coal_marker_layers,
+    "Gas-fired power plants": gas_marker_layers,
+    "Wind farms": wind_marker_layers,
+    "Hydropower plants": hydro_marker_layers,
+    "Solar power plants": solar_marker_layers,
+  };
+
   // Add the layers control
-  const layersControl = L.control.layers(baseLayers).addTo(map);
+  const layersControl = L.control.layers(baseLayers, overlayMaps).addTo(map);
+  // By default, display the first marker layer and leave other layers unckecked
+  const overlayInputs = layersControl._overlaysList.children;
+  for (let i = 1; i < overlayInputs.length; i++) {
+    overlayInputs[i].getElementsByTagName("input")[0].click();
+  }
 </script>
 {%endblock%}
